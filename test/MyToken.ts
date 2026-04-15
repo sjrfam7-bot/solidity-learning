@@ -1,10 +1,13 @@
 import hre from "hardhat";
 import { expect } from "chai";
 import { MyToken } from "../typechain-types";
+import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 describe("mytoken deploy", () => {
   let myTokenC: MyToken;
+  let signers: HardhatEthersSigner[];
   before("should deploy", async () => {
+    signers = await hre.ethers.getSigners();
     myTokenC = await hre.ethers.deployContract("MyToken", [
       "MyToken",
       "MT",
@@ -21,10 +24,10 @@ describe("mytoken deploy", () => {
     expect(await myTokenC.decimals()).equal(18);
   });
   it("should retuen 0 totalSupply ", async () => {
-    expect(await myTokenC.totalSupply()).equal(1);
+    expect(await myTokenC.totalSupply()).equal(1n * 10n ** 18n);
   });
-  it("should retuen 0 balance for signer 0 ", async () => {
-    const signers = await hre.ethers.getSigners();
-    expect(await myTokenC.balanceOf(signers[0].address)).equal(0);
+  it("should retuen 1MT balance for signer 0 ", async () => {
+    const signer0 = signers[0];
+    expect(await myTokenC.balanceOf(signer0.address)).equal(1n * 10n ** 18n);
   });
 });
