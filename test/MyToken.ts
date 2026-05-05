@@ -40,6 +40,15 @@ describe("mytoken", () => {
         MINTING_AMOUNT * 10n ** 18n,
       );
     });
+
+    //TDD: TEST DRIVEN DEVELOPMENT:테스트로 개발 진행
+    it("should return or revert when mining infinitly", async () => {
+      const hacker = signers[2];
+      const mintingAgainAmount = hre.ethers.parseUnits("10000", DECIMALS);
+      await expect(
+        myTokenC.connect(hacker).mint(mintingAgainAmount, hacker),
+      ).to.be.revertedWith("you are not authorized to manage this token");
+    });
   });
   describe(" transfer", () => {
     it("shoud have 0.5MT", async () => {
