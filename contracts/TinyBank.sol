@@ -7,6 +7,8 @@ interface IMyToken {
     function transfer(uint256 amount, address to) external;
 
     function transferFrom(address from, address to, uint256 amount) external;
+
+    function mint(uint256 amount, address owner) external;
 }
 
 contract TinyBank {
@@ -14,11 +16,22 @@ contract TinyBank {
     event Withdraw(uint256, address);
 
     IMyToken public stakingToken;
+
+    mapping(address => uint256) public lastClaimedblock;
+    uint256 rewardPerBlock = 1 * 10 ** 18;
+
     mapping(address => uint256) public staked;
     uint256 public totalStaked;
 
     constructor(IMyToken _stakingToken) {
         stakingToken = _stakingToken;
+    }
+
+    function distributeReward(address to) internal {
+        uint256 blocks = block.number - lastClaimedblock[to];
+        uint256 reward = (blocks * rewardPerBlock * staked[to]) / totalStaked;
+        stakingToken.mint(reward, to);
+        lastClaimedblock[to] = block.number;
     }
 
     function stake(uint256 _amount) external {
@@ -31,6 +44,7 @@ contract TinyBank {
 
     function withdraw(uint256 _amount) external {
         require(staked[msg.sender] >= _amount, "insufficient staked token");
+        distributeReward(msg.sender);
         stakingToken.transfer(_amount, msg.sender);
         staked[msg.sender] -= _amount;
         totalStaked -= _amount;
