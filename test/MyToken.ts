@@ -43,11 +43,11 @@ describe("mytoken", () => {
 
     //TDD: TEST DRIVEN DEVELOPMENT:테스트로 개발 진행
     it("should return or revert when mining infinitly", async () => {
-      const hacker = signers[2];
+      const hacker = signers[3];
       const mintingAgainAmount = hre.ethers.parseUnits("10000", DECIMALS);
       await expect(
         myTokenC.connect(hacker).mint(mintingAgainAmount, hacker),
-      ).to.be.revertedWith("you are not authorized to manage this token");
+      ).to.be.revertedWith("You are not authorized to manage this contract");
     });
   });
   describe(" transfer", () => {
