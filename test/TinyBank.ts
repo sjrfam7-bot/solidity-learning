@@ -77,7 +77,14 @@ describe("TinyBank", () => {
       const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
       await expect(
         tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange),
-      ).to.be.revertedWith("You are not authorized to manage this contract");
+      ).to.be.revertedWith("You are not a manager");
+    });
+    it("should revert if not all managers confirmed", async () => {
+      const manager = signers[0];
+
+      await expect(
+        tinyBankC.connect(manager).setRewardPerBlock(100),
+      ).to.be.revertedWith("Not all confirmed yet");
     });
   });
 });

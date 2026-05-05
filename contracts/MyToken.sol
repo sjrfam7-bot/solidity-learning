@@ -20,7 +20,7 @@ contract MyToken is ManagedAccess {
         string memory _symbol,
         uint8 _decimal,
         uint256 _amount
-    ) ManagedAccess(msg.sender, msg.sender) {
+    ) ManagedAccess(msg.sender, msg.sender, msg.sender) {
         name = _name;
         symbol = _symbol;
         decimals = _decimal;
@@ -45,15 +45,17 @@ contract MyToken is ManagedAccess {
         _mint(amount, to);
     }
 
-    function setManager(address _manager) external onlyOwner {
-        manager = _manager;
+    function setManager(address _manager) external onlyManager {
+        manager1 = _manager;
+        manager2 = _manager;
+        manager3 = _manager;
     }
 
     function _mint(uint256 amount, address to) internal {
         totalSupply = totalSupply + amount;
         balanceOf[to] = balanceOf[to] + amount;
 
-        emit Transfer(address(0), owner, amount);
+        emit Transfer(address(0), to, amount);
     }
 
     function transfer(uint256 amount, address to) external {
